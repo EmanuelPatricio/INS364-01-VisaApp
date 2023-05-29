@@ -1,0 +1,94 @@
+﻿@page "/"
+@using Visa_App;
+
+<PageTitle>Solicitud visa</PageTitle>
+
+@if (Solicitudes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <Autocomplete TItem="SolicitudDto"
+                  TValue="string"
+                  Data="@Solicitudes"
+                  TextField="@(( item ) => $"{item.MUN_CED}-{item.SEQ_CED}-{item.VER_CED}")"
+                  ValueField="@(( item ) => $"{item.MUN_CED}-{item.SEQ_CED}-{item.VER_CED}")"
+                  SelectedValue="@selectedSearchValue"
+                  SelectedValueChanged="t => IdSearched(t)"
+                  Placeholder="Search..."
+                  Filter="AutocompleteFilter.StartsWith">
+        <NotFoundContent> Sorry... @context was not found! :( </NotFoundContent>
+    </Autocomplete>
+
+    <br />
+    <br />
+    <br />
+
+    @if (!isNewRecord)
+    {
+        <Field Horizontal>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Nombres: @persona.NOMBRES
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Apellidos: @($"{persona.APELLIDO1} {persona.APELLIDO2}")
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Sexo: @persona.SEXO
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Fecha de nacimiento: @persona.FECHA_NAC
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Telefono: @persona.TELEFONO
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is12">
+                Lugar de nacimiento: @persona.LUGAR_NAC
+            </FieldBody>
+        </Field>
+
+        <br />
+        <br />
+        <br />
+    }
+
+    <Field Horizontal>
+        <FieldBody ColumnSize="ColumnSize.Is4">
+            Municipio Cedula: <InputMask Mask="999" @bind-Value="@persona.MUN_CED" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is4">
+            Secuencia Cedula: <InputMask Mask="9999999" @bind-Value="@persona.SEQ_CED" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is4">
+            Ver. Cedula: <InputMask Mask="9" @bind-Value="@persona.VER_CED" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is12">
+            Nombres: <TextEdit @bind-Text="@persona.NOMBRES" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is6">
+            Apellido 1: <TextEdit @bind-Text="@persona.APELLIDO1" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is6">
+            Apellido 2: <TextEdit @bind-Text="@persona.APELLIDO2" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is12">
+            Sexo:
+            <select @bind-value="@persona.SEXO" @bind-value:event="oninput">
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+            </select>
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is12">
+            Fecha de nacimiento: <InputMask Alias="datetime" InputFormat="dd/mm/yyyy" OutputFormat="ddmmyyyy" @bind-Value="@persona.FECHA_NAC" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is12">
+            Telefono: <InputMask Mask="999-999-9999" @bind-Value="@persona.TELEFONO" />
+        </FieldBody>
+        <FieldBody ColumnSize="ColumnSize.Is12">
+            Lugar de nacimiento: <TextEdit @bind-Text="@persona.LUGAR_NAC" />
+        </FieldBody>
+    </Field>
+    <Button Color="Color.Primary" Clicked="@OnButtonClicked">Create</Button>
+    <Button Color="Color.Secondary" Clicked="@NewRecord">New Record</Button>
+}
